@@ -1,352 +1,107 @@
+# ADVANCED CODE DOCUMENTATION: LINEAR ALGEBRA & STATISTICS CALCULATOR
 
-================================================================================
-ADDENDUM: ADVANCED FEATURES WITH FRACTIONAL IMPLEMENTATION 
-================================================================================
+This document provides a comprehensive technical breakdown of every function used in this project. The calculator is built on a custom **Fraction** engine to ensure exact results (where mathematically possible) and handles both complex Linear Algebra and common Statistical operations.
 
-The following 3 advanced operations were added to round out the feature set
-to 17 total operations, matching the original full version:
+---
 
-================================================================================
-FEATURE 1: EIGENVALUES/EIGENVECTORS
-================================================================================
+## 1. THE FOUNDATION: Fraction.h
+The `Fraction` class handles all arithmetic. By using two `long long` values (numerator and denominator), we avoid the "floating point drift" (e.g., 0.1 + 0.2 = 0.30000000004) common in standard programming.
 
-LOCATION: Matrix.cpp, lines ~490-550
+### `reduce()`
+- **Purpose**: Simplifies a fraction to its lowest terms (e.g., 4/8 becomes 1/2).
+- **Logic**: It calculates the Greatest Common Divisor (GCD) of the numerator and denominator using `std::gcd` and divides both by it. It also ensures the denominator is always positive.
 
-std::pair<std::vector<Fraction>, Matrix> Matrix::eigenvalues() const {
-    if (!isSquare()) {
-        throw std::invalid_argument("Eigenvalues only defined for square matrices");
-    }
-    
-    std::vector<Fraction> eigenvals;
-    
-    // For 2x2 matrix, solve analytically
-    if (rows == 2) {
-        Fraction tr = trace();
-        Fraction det = determinant();
-        
-        // Characteristic equation: λ² - trace*λ + det = 0
-        // Using quadratic formula: λ = (trace ± sqrt(trace² - 4*det)) / 2
-        double traceD = tr.toDouble();
-        double detD = det.toDouble();
-        double discriminant = traceD * traceD - 4 * detD;
-        
-        if (discriminant >= 0) {
-            double sqrt_disc = std::sqrt(discriminant);
-            double lambda1 = (traceD + sqrt_disc) / 2.0;
-            double lambda2 = (traceD - sqrt_disc) / 2.0;
-            
-            eigenvals.push_back(Fraction::fromDouble(lambda1));
-            eigenvals.push_back(Fraction::fromDouble(lambda2));
-        } else {
-            // Complex eigenvalues - use trace/2 as real part
-            eigenvals.push_back(tr / Fraction(2, 1));
-            eigenvals.push_back(tr / Fraction(2, 1));
-        }
-    } else {
-        // For larger matrices, use QR iteration
-        Matrix A = *this;
-        
-        // Perform 30 QR iterations
-        for (int iter = 0; iter < 30; iter++) {
-            auto [Q, R] = A.qrDecomposition();
-            A = R * Q;
-        }
-        
-        // Diagonal elements are eigenvalue approximations
-        for (int i = 0; i < rows; i++) {
-            eigenvals.push_back(A.data[i][i]);
-        }
-    }
-    
-    // Create approximate eigenvector matrix (identity for simplicity)
-    Matrix eigenvectors = identity(rows);
-    
-    return {eigenvals, eigenvectors};
-}
+### `fromDouble(double value)`
+- **Purpose**: Converts a decimal number into the closest possible fraction.
+- **Logic**: Uses a **Continued Fraction Expansion** algorithm. This is much more accurate than simple rounding, as it can recognize decimals like 0.3333... as 1/3 exactly.
 
-DETAILED EXPLANATION:
+### Arithmetic Operators (`+`, `-`, `*`, `/`)
+- **Logic**: Implements standard fraction rules:
+  - Addition: `(a/b) + (c/d) = (ad + bc) / bd`
+  - Multiplication: `(a/b) * (c/d) = (ac) / (bd)`
+- All results are automatically passed through `reduce()` after every operation.
 
-PURPOSE: Calculate eigenvalues (special numbers λ where Av = λv for some vector v)
+---
 
-WHY THIS IS CHALLENGING WITH FRACTIONS:
-- Eigenvalues are roots of the characteristic polynomial det(A - λI) = 0
-- For anything bigger than 2×2, these roots are often IRRATIONAL (like √2, π, etc.)
-- You can't represent irrational numbers exactly as fractions!
+## 2. LINEAR ALGEBRA: Matrix.cpp / Matrix.h
+The `Matrix` class uses a `std::vector<std::vector<Fraction>>` to store data.
 
-SOLUTION APPROACH:
+### `operator+` and `operator-` (Addition/Subtraction)
+- **Logic**: Iterates through every element `(i, j)` and performs fraction addition/subtraction on corresponding cells.
+- **Constraint**: Throws an error if matrix dimensions don't match.
 
-1. **For 2×2 Matrices - Analytical Solution**:
-   
-   The characteristic equation is: λ² - trace(A)·λ + det(A) = 0
-   
-   This is a quadratic equation, so we use the quadratic formula:
-   λ = (trace ± √(trace² - 4·det)) / 2
-   
-   STEPS:
-   a) Get trace and determinant (both are exact fractions)
-   b) Convert to doubles for square root calculation
-   c) Check discriminant (trace² - 4·det):
-      - If positive: two real eigenvalues
-      - If negative: complex eigenvalues (we use real part = trace/2)
-   d) Calculate eigenvalues as decimals
-   e) Convert back to fractions using Fraction::fromDouble()
-   
-   EXAMPLE: Matrix [[3, 1], [0, 2]]
-   - trace = 3 + 2 = 5
-   - det = 3×2 - 1×0 = 6
-   - λ² - 5λ + 6 = 0
-   - λ = (5 ± √(25-24))/2 = (5 ± 1)/2
-   - λ₁ = 3, λ₂ = 2  (exact!)
+### `operator*` (Multiplication)
+- **Logic**: Standard dot product: `Result[i][j] = Sum(A[i][k] * B[k][j])`.
+- **Complexity**: O(n³) operations. Each operation is a fraction multiplication and addition.
 
-2. **For Larger Matrices - QR Algorithm**:
-   
-   The QR algorithm is an iterative method that converges to diagonal form,
-   where diagonal elements are eigenvalues.
-   
-   ALGORITHM:
-   1. Start with A₀ = A
-   2. For i = 1 to 30:
-      a) Decompose: Aᵢ = QᵢRᵢ (using Gram-Schmidt)
-      b) Multiply in reverse: Aᵢ₊₁ = RᵢQᵢ
-   3. After 30 iterations, diagonal of A₃₀ ≈ eigenvalues
-   
-   WHY IT WORKS:
-   - This transformation preserves eigenvalues
-   - Matrix becomes more diagonal with each iteration
-   - Convergence is fast for most matrices
-   
-   EXAMPLE: 3×3 matrix
-   - Iteration 1: A₁ = R₀Q₀ (a bit more diagonal)
-   - Iteration 2: A₂ = R₁Q₁ (even more diagonal)
-   - ...
-   - Iteration 30: A₃₀ ≈ diagonal matrix
-   - Read eigenvalues from diagonal
-   
-3. **Result Conversion**:
-   
-   All numerical results are converted to fractions for display:
-   - λ = 2.0 → 2/1
-   - λ = 0.5 → 1/2
-   - λ = 0.333... → approximated as fraction like 1/3
-   
-   This maintains consistency with the fraction interface even though
-   the calculations use approximation.
+### `transpose()`
+- **Logic**: Switches rows with columns. `Result[j][i] = Original[i][j]`.
 
-IMPORTANT NOTES:
-- Eigenvectors are NOT computed accurately (we just return identity matrix)
-- For educational purposes, eigenvalues are the most important output
-- Results are APPROXIMATE for matrices >2×2 (converted to closest fraction)
-- Complex eigenvalues show only real part
+### `ref()` (Row Echelon Form)
+- **Logic**: Uses **Gaussian Elimination**.
+- **Steps**:
+  1. Find a pivot (non-zero element) in the current column.
+  2. Swap rows if necessary to bring the pivot to the diagonal.
+  3. Use row operations (`R2 = R2 - (pivot2/pivot1)*R1`) to clear all elements below the pivot.
 
-================================================================================
-FEATURE 2: QR DECOMPOSITION (SVD Component)
-================================================================================
+### `rref()` (Reduced Row Echelon Form)
+- **Logic**: Extends the `ref()` logic.
+- **Steps**: After achieving `ref()`, it performs "back-substitution" to clear elements *above* the pivots and then divides each row by its pivot value to make all pivots equal to `1`.
+- **Utility**: Used as the backbone for solving linear equations, finding Rank, and checking Linear Independence.
 
-LOCATION: Matrix.cpp, lines ~560-565
+### `determinant()`
+- **Logic**: For 1x1 and 2x2, it uses fixed formulas. For larger matrices, it uses **LU Decomposition-style elimination** (converting to triangular form via `ref()`).
+- **Formula**: The determinant of a triangular matrix is the product of its diagonal elements. We also track how many row swaps were made (each swap flips the sign).
 
-std::pair<Matrix, Matrix> Matrix::qrDecomposition() const {
-    Matrix Q = gramSchmidt();
-    Matrix R = Q.transpose() * (*this);
-    return {Q, R};
-}
+### `inverse()`
+- **Logic**: Uses the **Gauss-Jordan Method**.
+- **Steps**: Creates an augmented matrix `[A | I]` where `I` is the identity matrix. It performs `rref()` on the whole thing. If it's successful, the right side of the augmented matrix becomes `A⁻¹`.
 
-DETAILED EXPLANATION:
+### `rank()`
+- **Logic**: Counts the number of non-zero rows in the `rref()` version of the matrix. This represents the number of linearly independent rows/columns.
 
-PURPOSE: Decompose matrix A into A = Q × R where:
-- Q is orthogonal (columns are perpendicular unit vectors)
-- R is upper triangular (zeros below diagonal)
+### `trace()`
+- **Logic**: Calculates the sum of all elements on the main diagonal (`A[0][0] + A[1][1] + ...`).
 
-THIS IS USED FOR:
-1. QR algorithm for eigenvalues (see above)
-2. Solving least squares problems
-3. Component of full SVD (Singular Value Decomposition)
+### `eigenvalues()`
+- **Logic**:
+  - **2x2**: Solves the characteristic quadratic equation `λ² - trace(A)λ + det(A) = 0` using the quadratic formula.
+  - **Larger**: Uses the **QR Algorithm**. It repeatedly decomposes `A = QR` and sets `A = RQ`. Over several iterations (30), the matrix converges to a form where eigenvalues are on the diagonal.
 
-ALGORITHM:
+### `getRowVector(i)` and `getColVector(j)`
+- **Logic**: Extracts a specific row or column as a single list (`std::vector`) to be used in statistical calculations.
 
-1. **Orthogonalize columns** using Gram-Schmidt:
-   Q = gramSchmidt()   // Makes perpendicular unit columns
-   
-2. **Calculate R** as:
-   R = Q^T × A
-   
-   WHY THIS WORKS:
-   - If A = QR, then Q^T A = Q^T QR
-   - Since Q is orthogonal, Q^T Q = I (identity)
-   - So Q^T A = R
+---
 
-EXAMPLE (2×2):
+## 3. STATISTICS: Statistics.h
+A utility class designed to work with both standard vectors and matrix-extracted data.
 
-Input Matrix A:
-  [3  1]
-  [0  2]
+### `calculateMean()`
+- **Logic**: Sums all elements in the set and divides by the total count `n`.
+- **Formula**: `Σx / n`. Returns a `Fraction`.
 
-Step 1: Gram-Schmidt gives Q:
-  [1  0]
-  [0  1]
-  (already orthogonal in this case)
+### `calculateVariance()`
+- **Logic**: Calculates **Sample Variance** (Bessel's correction).
+- **Steps**:
+  1. Find the Mean.
+  2. Calculate the squared difference of each number from the mean: `(x - Mean)²`.
+  3. Sum those squares and divide by `n - 1`.
+- **Formula**: `Σ(x - Mean)² / (n - 1)`.
 
-Step 2: Calculate R = Q^T × A:
-  R = [1 0]   [3 1]   [3 1]
-      [0 1] × [0 2] = [0 2]
+### `calculateStandardDeviation()`
+- **Logic**: Simply the square root of the Variance.
+- **Note**: Since the square root of a fraction can be irrational, this function returns a `double` for precision, but the interface shows it alongside the fractional variance.
 
-Result: A = Q × R
-  [3 1]   [1 0]   [3 1]
-  [0 2] = [0 1] × [0 2]
+---
 
-FRACTION HANDLING:
-- All intermediate calculations use Fraction arithmetic
-- Q matrix has orthonormal columns (might have approximations due to √ in normalization)
-- R matrix is exact triangular form
-- Result maintains fraction representation throughout
+## 4. UI & LOGIC: main.cpp
 
-================================================================================
-FEATURE 3: DIAGONALIZATION CHECK
-================================================================================
+### `inputMatrix()`
+- **Logic**: A robust input handler that accepts integers or fractions (e.g., `5/3`). It parses the string input and converts it into `Fraction` objects before placing them in the matrix.
 
-LOCATION: Matrix.cpp, lines ~570-582
+### `linearAlgebraMenu()` and `statisticalMenu()`
+- **Logic**: These functions isolate the logic for each toolset.
+- **Integration**: The `statisticalMenu` allows users to select which "Source Matrix" to pull data from, then choose a specific Row or Column to analyze, bridging the gap between Algebra and Statistics.
 
-bool Matrix::isDiagonalizable() const {
-    if (!isSquare()) {
-        return false;
-    }
-    
-    // Simplified check: if determinant is non-zero
-    try {
-        Fraction det = determinant();
-        return !det.isZero();
-    } catch (...) {
-        return false;
-    }
-}
-
-DETAILED EXPLANATION:
-
-PURPOSE: Check if matrix can be written as A = PDP⁻¹ where D is diagonal.
-
-MATHEMATICAL BACKGROUND:
-
-A matrix is diagonalizable if:
-1. It has n linearly independent eigenvectors (for n×n matrix)
-2. The geometric multiplicity equals algebraic multiplicity for each eigenvalue
-
-FULL METHOD (what we COULD do):
-1. Compute all eigenvalues
-2. For each eigenvalue λ, find eigenvectors by solving (A - λI)v = 0
-3. Count independent eigenvectors
-4. If count = n, matrix is diagonalizable
-
-OUR SIMPLIFIED APPROACH:
-
-We use a heuristic: **if determinant ≠ 0, likely diagonalizable**
-
-REASONING:
-- Non-zero det means matrix is invertible
-- Invertible matrices have no zero eigenvalues
-- Most invertible matrices are diagonalizable
-- Exception: Some matrices (like [[1, 1], [0, 1]]) have det≠0 but aren't diagonalizable
-
-WHY THIS SIMPLIFICATION?
-1. Full eigenvalue/eigenvector computation is expensive
-2. For educational purposes, this gives good intuition
-3. Works correctly for most common cases
-4. Could be enhanced later with full eigenvector computation
-
-EXAMPLE CHECKS:
-
-Matrix A = [2 0]  → det = 4  → likely diagonalizable ✓
-           [0 2]
-
-Matrix B = [1 1]  → det = 1  → says diagonalizable
-           [0 1]                (but actually ISN'T - this is the limitation!)
-
-Matrix C = [1 0]  → det = 0   → NOT diagonalizable ✓
-           [0 0]
-
-IMPROVEMENTS POSSIBLE:
-- Actually compute eigenvectors
-- Check linear independence of eigenvectors
-- Count geometric vs algebraic multiplicity
-- But these require more complex algorithms
-
-================================================================================
-HOW THE FEATURES WORK TOGETHER
-================================================================================
-
-1. **QR Decomposition** →used in→ **Eigenvalue Calculation (QR Algorithm)**
-   
-   The QR algorithm repeatedly does:
-   A₀ = QR, then A₁ = RQ, then decompose again...
-
-2. **Eigenvalues** →used to check→ **Diagonalization**
-   
-   A matrix is diagonalizable if it has enough independent eigenvectors.
-
-3. **All use Fractions** for consistency:
-   
-   Even though calculations involve approximations (√, iterative methods),
-   results are converted to fractions for display and further operations.
-
-================================================================================
-LIMITATIONS OF FRACTION-BASED APPROACH FOR THESE FEATURES
-================================================================================
-
-1. **Eigenvalues**:
-   - Only exact for 2×2 matrices with rational eigenvalues
-   - Larger matrices use approximation then convert to fraction
-   - Complex eigenvalues are not properly handled
-
-2. **QR Decomposition**:
-   - Normalization involves square roots (√)
-   - Results are approximate, converted to fractions
-   - Q matrix may not be perfectly orthogonal due to approximation
-
-3. **Diagonalization Check**:
-   - Uses heuristic, not rigorous test
-   - Can give false positives
-   - Doesn't actually construct the diagonalization
-
-================================================================================
-WHY WE ADDED THESE DESPITE LIMITATIONS
-================================================================================
-
-1. **Completeness**: Matches  the original 17-operation feature set
-
-2. **Educational Value**: Students learn the CONCEPTS even if results are approximate
-
-3. **Practical Use**: Many textbook problems have nice eigenvalues that convert well
-
-4. **Consistency**: Everything displays as fractions, maintaining the interface
-
-5. **Extensibility**: Framework in place for future improvements
-
-================================================================================
-SUMMARY OF ALL 17 OPERATIONS
-================================================================================
-
-EXACT (Pure Fraction Arithmetic):
- 1. Matrix Addition
- 2. Matrix Subtraction
- 3. Matrix Multiplication
- 4. RREF
- 5. REF
- 6. Determinant
- 7. Rank
- 8. Linear Independence
- 9. Basis
-10. Inverse
-11. Transpose
-12. Trace
-
-APPROXIMATE (Converted to Fractions):
-13. Gram-Schmidt (√ in normalization)
-14. Orthogonality check (uses tolerance)
-15. Eigenvalues (QR algorithm or √ in quadratic formula)
-16. Diagonalization (heuristic check)
-17. SVD/QR Decomposition (Gram-Schmidt based)
-
-The complete calculator now provides full linear algebra functionality
-with the benefits of exact fractional arithmetic where possible!
-
-================================================================================
-END OF ADDENDUM
-================================================================================
+### `main()`
+- **Logic**: The top-level controller that manages the clear screen, header printing, and routing the user to the appropriate sub-menu.
