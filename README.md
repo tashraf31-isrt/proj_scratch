@@ -1,36 +1,34 @@
-# C++ Linear Algebra Matrix Calculator (Fraction-Based)
+# C++ Linear Algebra & Statistics Calculator (Decimal-Based)
 
-A simplified C++ matrix library with **exact fractional arithmetic** and a user-friendly terminal interface. Perfect for educational purposes!
+A professional C++ library for **Linear Algebra** and **Statistical Analysis** with high-precision decimal output and a user-friendly terminal interface.
 
 ## Key Features
 
-✨ **Exact Fraction Results** - No more 0.3333... See `1/3` instead!  
-📏 **5×5 Maximum Size** - Optimized for basic linear algebra learning  
-🎨 **Color-Coded Interface** - Beautiful terminal UI  
-🔢 **Statistical & Algebra Tools** - Comprehensive math suite  
-📊 **Matrix-Based Stats** - Mean, Variance, Std Dev from matrix data
+✨ **High Precision** - Uses `double` arithmetic with 4-decimal-place output.
+📏 **5×5 Maximum Size** - Optimized for linear algebra learning and matrix analysis.
+🎨 **Color-Coded Interface** - Premium terminal UI with intuitive navigation.
+📊 **Matrix-Based Stats** - Extract rows or columns from matrices for statistical calculations.
+🔢 **14 Operations** - Comprehensive suite across Algebra and Statistics.
 
 ## Operations
 
-### Core Operations
-1. **Addition/Subtraction** - Merged for convenience
-2. **Matrix Multiplication** - Standard matrix product
-3. **RREF (with Linear Independence)** - Gauss-Jordan with independence check
-4. **REF (Gaussian)** - Row Echelon Form
-5. **Determinant** - Essential matrix property
-6. **Rank (Span)** - Dimension of column space
-
-### Advanced Analysis
-7. **Inverse** - Matrix inversion (if exists)
-8. **Eigenvalues/Eigenvectors** - Spectral analysis
-9. **Diagonalization** - Check for similar diagonal matrix
-10. **Transpose** - Row-column swap
-11. **Trace** - Sum of diagonal elements
+### Linear Algebra
+1.  **Addition/Subtraction**
+2.  **Matrix Multiplication**
+3.  **RREF (Reduced Row Echelon Form)** - With Linear Independence check.
+4.  **REF (Gaussian Elimination)**
+5.  **Determinant** - Using triangular reduction for stability.
+6.  **Rank (Span)** - Number of independent dimensions.
+7.  **Inverse** - Full matrix inversion.
+8.  **Eigenvalues/Eigenvectors** - Using the QR Algorithm.
+9.  **Diagonalization** - Check for similar diagonal matrices.
+10. **Transpose** - Row-column swap.
+11. **Trace** - Sum of main diagonal.
 
 ### Statistical Analysis
-1. **Mean** - Average of row/column elements
-2. **Variance** - Sample variance (n-1)
-3. **Standard Deviation** - Square root of variance
+1.  **Mean** - Calculate the average of a selected row or column.
+2.  **Variance** - Sample variance with Bessel's correction (n-1).
+3.  **Standard Deviation** - Square root of variance.
 
 ## Quick Start
 
@@ -44,113 +42,31 @@ g++ -o main_full.exe main.cpp Matrix.cpp -std=c++17
 .\main_full.exe
 ```
 
-### Example Usage
-
-**Input fractions directly:**
-```
-Enter number of rows: 2
-Enter number of columns: 2
-
-Enter elements row by row (integers or fractions like 1/2):
-Row 1: 1/2 1/3
-Row 2: 1/4 1/5
-```
-
-**Output as clean fractions:**
-```
-Matrix:
-  [      1/2        1/3 ]
-  [      1/4        1/5 ]
-
-Determinant: 1/120
-```
-
 ## Project Structure
 
 ```
 proj_scratch/
-├── Fraction.h          # Fraction class (rational arithmetic)
 ├── Matrix.h            # Matrix class header
 ├── Matrix.cpp          # Matrix implementation  
 ├── Statistics.h        # Statistical utilities
 ├── main.cpp            # Terminal UI
-├── .gitignore          # Repository cleanup
+├── .gitignore          # Repository cleanup (ignores binaries)
 └── README.md           # This file
 ```
 
 ## Technical Details
 
-### Fraction Class
-- Automatic reduction to lowest terms
-- Supports input like `1/2`, `3/4`
-- Exact arithmetic (no floating point errors)
-- Clean display formatting
+### Numerical Stability
+The project uses an `EPSILON` threshold (1e-9) for all zero-checks to ensure that floating-point inaccuracies do not interfere with calculations.
 
-### Matrix Class
-- Maximum size: 5×5
-- Dynamic allocation with validation
-- Fraction-based for exact results
-- Comprehensive error checking
+### QR Algorithm
+For matrices larger than 2×2, eigenvalues are approximated using 30 iterations of the QR algorithm, providing stable results.
 
-### Algorithms
-- **Gaussian Elimination** - O(n³) for REF/RREF
-- **Recursive Determinant** - Expansion by minors
-- **Gauss-Jordan** - For matrix inverse
-- **Gram-Schmidt** - Orthogonalization
-
-## Example Test Cases
-
-### Test 1: Determinant
-```
-Input:
-2 2
-4 2
-3 1
-
-Output: Determinant = -2
-```
-
-### Test 2: RREF with Fractions
-```
-Input:
-2 3
-1/2 1/3 1/4
-1/5 1/6 1/7
-
-Output: RREF with exact fractions
-```
-
-### Test 3: Matrix Inverse
-```
-Input (Identity):
-2 2
-1 0
-0 1
-
-Output: Same matrix (its own inverse)
-```
-
-## Limitations
-
-- **Max Size**: 5×5 matrices only
-- **Approximate Data**: Gram-Schmidt and Eigenvalues use some decimal approximation (converted back to fractions)
-
-## Why Fractions?
-
-Perfect for education:
-- ✅ See exact results: `1/3` not `0.333...`
-- ✅ Understand patterns better
-- ✅ No rounding errors
-- ✅ Cleaner for homework problems
-
-## Color Guide
-
-- **Cyan** - Input prompts
-- **Yellow** - Numbers and results
-- **Green** - Success and labels
-- **Red** - Errors
-- **Magenta** - Section headers
+## Example Test Case: Statistics
+1. Enter a 1x3 Matrix: `[1.0, 2.0, 3.0]`
+2. Go to **Statistical Menu** -> **Calculate Mean**
+3. Select **Row 1**
+4. Output: `Mean: 2.0000`
 
 ---
-
-**Perfect for linear algebra students and educators!** 🎓
+**Designed for students, educators, and developers interested in numerical methods!** 🎓
