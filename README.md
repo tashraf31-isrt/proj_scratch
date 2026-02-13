@@ -7,7 +7,8 @@ A simplified C++ matrix library with **exact fractional arithmetic** and a user-
 ✨ **Exact Fraction Results** - No more 0.3333... See `1/3` instead!  
 📏 **5×5 Maximum Size** - Optimized for basic linear algebra learning  
 🎨 **Color-Coded Interface** - Beautiful terminal UI  
-🔢 **12 Streamlined Operations** - Focused linear algebra tools  
+🔢 **Statistical & Algebra Tools** - Comprehensive math suite  
+📊 **Matrix-Based Stats** - Mean, Variance, Std Dev from matrix data
 
 ## Operations
 
@@ -25,6 +26,11 @@ A simplified C++ matrix library with **exact fractional arithmetic** and a user-
 9. **Diagonalization** - Check for similar diagonal matrix
 10. **Transpose** - Row-column swap
 11. **Trace** - Sum of diagonal elements
+
+### Statistical Analysis
+1. **Mean** - Average of row/column elements
+2. **Variance** - Sample variance (n-1)
+3. **Standard Deviation** - Square root of variance
 
 ## Quick Start
 
@@ -66,8 +72,9 @@ proj_scratch/
 ├── Fraction.h          # Fraction class (rational arithmetic)
 ├── Matrix.h            # Matrix class header
 ├── Matrix.cpp          # Matrix implementation  
+├── Statistics.h        # Statistical utilities
 ├── main.cpp            # Terminal UI
-├── main_fraction.exe   # Compiled executable
+├── .gitignore          # Repository cleanup
 └── README.md           # This file
 ```
 
@@ -126,8 +133,7 @@ Output: Same matrix (its own inverse)
 ## Limitations
 
 - **Max Size**: 5×5 matrices only
-- **No Eigenvalues**: Removed for simplicity  
-- **Gram-Schmidt**: Uses approximation for normalization
+- **Approximate Data**: Gram-Schmidt and Eigenvalues use some decimal approximation (converted back to fractions)
 
 ## Why Fractions?
 
