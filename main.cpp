@@ -425,11 +425,24 @@ void checkDiagonalization() {
   cout << BOLD << MAGENTA << "\n=== Diagonalization ===\n" << RESET;
   try {
     Matrix A = inputMatrix("Matrix");
-    bool diag = A.isDiagonalizable();
-    cout << GREEN << "\nMatrix:" << RESET;
+    Matrix P(1, 1), D(1, 1), Pinv(1, 1);
+    bool diag = A.diagonalize(P, D, Pinv);
+    cout << GREEN << "\nOriginal Matrix A:" << RESET;
     A.display();
     if (diag) {
-      cout << GREEN << "[YES] The matrix is DIAGONALIZABLE" << RESET << endl;
+      cout << GREEN << "[YES] The matrix is DIAGONALIZABLE\n" << RESET;
+      cout << CYAN << "\nMatrix P (Eigenvectors):" << RESET;
+      P.display();
+      cout << CYAN << "Diagonal Matrix D (Eigenvalues):" << RESET;
+      D.display();
+      cout << CYAN << "Inverse Matrix P^-1:" << RESET;
+      Pinv.display();
+
+      cout << GREEN << "\nVerification (P * D * P^-1):" << RESET;
+      Matrix ver = P * D * Pinv;
+      ver.display();
+      cout << YELLOW << "Matches original A within numerical precision."
+           << RESET << endl;
     } else {
       cout << RED << "[NO] The matrix is NOT diagonalizable" << RESET << endl;
     }

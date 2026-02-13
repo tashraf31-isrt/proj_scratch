@@ -17,6 +17,7 @@ private:
 
 public:
   // Constructors
+  Matrix();
   Matrix(int r, int c);
   Matrix(const std::vector<std::vector<double>> &values);
 
@@ -44,8 +45,12 @@ public:
   int rank() const;
   double trace() const;
 
-  // Decompositions
+  // Eigen-stuff
   std::pair<std::vector<double>, Matrix> eigenvalues() const;
+  std::vector<Matrix> findEigenvectors(double lambda) const;
+  bool diagonalize(Matrix &P, Matrix &D, Matrix &Pinv) const;
+
+  // Decompositions
   Matrix gramSchmidt() const;
 
   std::pair<Matrix, Matrix> qrDecomposition() const;

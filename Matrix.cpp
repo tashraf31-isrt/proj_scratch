@@ -5,6 +5,10 @@
 const double EPSILON = 1e-9;
 
 // Constructors
+Matrix::Matrix() : rows(1), cols(1) {
+  data.resize(1, std::vector<double>(1, 0.0));
+}
+
 Matrix::Matrix(int r, int c) : rows(r), cols(c) {
   if (r > MAX_SIZE || c > MAX_SIZE || r < 1 || c < 1) {
     throw std::invalid_argument("Matrix dimensions must be between 1 and " +
@@ -395,14 +399,127 @@ std::pair<Matrix, Matrix> Matrix::qrDecomposition() const {
   return {Q, R};
 }
 
-bool Matrix::isDiagonalizable() const {
+std::vector<Matrix> Matrix::findEigenvectors(double lambda) const {
+  if (!isSquare())
+    throw std::invalid_argument(
+        "Eigenvectors only defined for square matrices");
+
+  // B = A - lambda*I
+  Matrix B = *this;
+  for (int i = 0; i < rows; i++) {
+    B.data[i][i] -= lambda;
+  }
+
+  // RREF(B) to find null space
+  Matrix r = B.rref();
+  std::vector<Matrix> eigenvectors;
+
+  // Find pivot columns
+  std::vector<int> pivotCol(rows, -1);
+  std::vector<bool> isPivot(cols, false);
+  int rIdx = 0;
+  for (int c = 0; c < cols && rIdx < rows; c++) {
+    if (std::abs(r.data[rIdx][c]) > EPSILON) {
+      pivotCol[rIdx] = c;
+      isPivot[c] = true;
+      rIdx++;
+    }
+  }
+
+  // Each free variable gives an eigenvector
+  for (int c = 0; c < cols; c++) {
+    if (!isPivot[c]) {
+      Matrix v(rows, 1);
+      v.data[c][0] = 1.0;
+      for (int i = 0; i < rIdx; i++) {
+        v.data[pivotCol[i]][0] = -r.data[i][c];
+      }
+      eigenvectors.push_back(v);
+    }
+  }
+
+  return eigenvectors;
+}
+
+bool Matrix::diagonalize(Matrix &P, Matrix &D, Matrix &Pinv) const {
   if (!isSquare())
     return false;
+
+  auto [eigenvals, _] = eigenvalues();
+  std::vector<Matrix> allEigenvectors;
+  std::vector<double> uniqueEigenvals;
+
+  // Use a small epsilon to group similar eigenvalues
+  for (double val : eigenvals) {
+    bool found = false;
+    for (double u : uniqueEigenvals) {
+      if (std::abs(val - u) < 1e-4) {
+        found = true;
+        break;
+      }
+    }
+    if (!found)
+      uniqueEigenvals.push_back(val);
+  }
+
+  for (double ev : uniqueEigenvals) {
+    auto vecs = findEigenvectors(ev);
+    for (const auto &v : vecs) {
+      allEigenvectors.push_back(v);
+    }
+  }
+
+  if ((int)allEigenvectors.size() < rows) {
+    return false;
+  }
+
+  // Take only n vectors (in case of numerical issues giving more)
+  if ((int)allEigenvectors.size() > rows) {
+    allEigenvectors.resize(rows);
+  }
+
+  // Construct P from eigenvectors
+  P = Matrix(rows, rows);
+  for (int j = 0; j < rows; j++) {
+    for (int i = 0; i < rows; i++) {
+      P.data[i][j] = allEigenvectors[j].data[i][0];
+    }
+  }
+
+  // Check if P is invertible
   try {
-    return std::abs(determinant()) > EPSILON;
+    if (std::abs(P.determinant()) < EPSILON)
+      return false;
+    Pinv = P.inverse();
   } catch (...) {
     return false;
   }
+
+  // Construct D from corresponding eigenvalues
+  D = Matrix::zero(rows, rows);
+  // Need to associate each eigenvector with its eigenvalue
+  // For simplicity here, since we grouped them, we just recalculate lambda for
+  // each vector
+  for (int j = 0; j < rows; j++) {
+    // Ax = lambda x -> pick non-zero component to find lambda
+    Matrix x = allEigenvectors[j];
+    Matrix Ax = (*this) * x;
+    double lambda = 0;
+    for (int i = 0; i < rows; i++) {
+      if (std::abs(x.data[i][0]) > 0.1) {
+        lambda = Ax.data[i][0] / x.data[i][0];
+        break;
+      }
+    }
+    D.data[j][j] = lambda;
+  }
+
+  return true;
+}
+
+bool Matrix::isDiagonalizable() const {
+  Matrix P(1, 1), D(1, 1), Pinv(1, 1);
+  return diagonalize(P, D, Pinv);
 }
 
 Matrix Matrix::identity(int n) {
