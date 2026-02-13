@@ -1,0 +1,144 @@
+================================================================================
+HEADER FILES QUICK REFERENCE - C++ MATRIX CALCULATOR
+================================================================================
+
+This is a concise reference for all header files used in the project.
+For detailed explanations, see HEADER_FILES_GUIDE.txt
+
+================================================================================
+STANDARD LIBRARY HEADERS
+================================================================================
+
+Header           Used In          Purpose                      Key Items
+-------------------------------------------------------------------------------
+<iostream>       main.cpp         Console I/O                  cout, cin, endl
+<vector>         Matrix.h/cpp     Dynamic arrays               vector<T>
+<string>         Fraction.h       Text manipulation            string, find(), substr()
+<cmath>          Fraction.h       Math functions               sqrt(), abs()
+<numeric>        Fraction.h       Numeric algorithms           gcd(), lcm()
+<iomanip>        Matrix.cpp       Output formatting            setw(), setprecision()
+<stdexcept>      Matrix.h/cpp     Exception handling           invalid_argument, runtime_error
+<algorithm>      Matrix.cpp       Common algorithms            swap(), min(), max()
+<limits>         main.cpp         Numeric limits               numeric_limits<T>::max()
+
+================================================================================
+CUSTOM PROJECT HEADERS
+================================================================================
+
+Fraction.h
+----------
+Defines: Fraction class (rational numbers)
+Includes: <iostream>, <string>, <cmath>, <numeric>
+Used by: Matrix.h
+Purpose: Exact fraction arithmetic (no floating-point errors)
+
+Matrix.h
+--------
+Defines: Matrix class, MAX_SIZE constant
+Includes: "Fraction.h", <vector>, <iostream>, <iomanip>, <stdexcept>, <algorithm>
+Used by: Matrix.cpp, main.cpp
+Purpose: Matrix operations using fractions
+
+================================================================================
+INCLUDE SYNTAX
+================================================================================
+
+System headers:   #include <filename>      // Angle brackets
+Project headers:  #include "filename"      // Quotes
+
+================================================================================
+DEPENDENCY CHAIN
+================================================================================
+
+main.cpp
+├── includes Matrix.h
+│   ├── includes Fraction.h
+│   │   ├── includes <iostream>
+│   │   ├── includes <string>
+│   │   ├── includes <cmath>
+│   │   └── includes <numeric>
+│   ├── includes <vector>
+│   ├── includes <iomanip>
+│   ├── includes <stdexcept>
+│   └── includes <algorithm>
+└── includes <limits>
+
+Matrix.cpp
+└── includes Matrix.h (same chain as above)
+
+================================================================================
+INCLUDE GUARDS
+================================================================================
+
+Every .h file uses guards to prevent double inclusion:
+
+#ifndef FILENAME_H
+#define FILENAME_H
+// ... declarations ...
+#endif
+
+Example from Fraction.h:
+#ifndef FRACTION_H
+#define FRACTION_H
+class Fraction { ... };
+#endif
+
+================================================================================
+COMMON USES IN THIS PROJECT
+================================================================================
+
+For exact fractions:
+  #include <numeric>  → std::gcd() to reduce fractions
+
+For matrix storage:
+  #include <vector>   → std::vector<std::vector<Fraction>>
+
+For matrix display:
+  #include <iomanip>  → std::setw() for alignment
+
+For error handling:
+  #include <stdexcept> → throw std::invalid_argument()
+
+For row swapping:
+  #include <algorithm> → std::swap()
+
+For square roots (Gram-Schmidt):
+  #include <cmath>    → std::sqrt()
+
+For parsing input "3/4":
+  #include <string>   → find('/'), substr()
+
+================================================================================
+WHY SEPARATE .h AND .cpp?
+================================================================================
+
+HEADER (.h):
+✓ Declarations (what exists)
+✓ Class definitions
+✓ Function prototypes
+✓ Included by multiple files
+✓ Fast to compile
+
+IMPLEMENTATION (.cpp):
+✓ Definitions (how it works)
+✓ Function bodies
+✓ Only compiled once
+✓ Can change without recompiling everything
+
+================================================================================
+COMPILATION PROCESS
+================================================================================
+
+1. PREPROCESSING: Copy all #include contents
+2. COMPILATION: Convert to object files (.o)
+3. LINKING: Combine object files into executable
+
+Command:
+g++ -o main_full.exe main.cpp Matrix.cpp -std=c++17
+
+Creates:
+main.cpp → (preprocess) → (compile) → main.o ↘
+                                              → link → main_full.exe
+Matrix.cpp → (preprocess) → (compile) → Matrix.o ↗
+
+================================================================================

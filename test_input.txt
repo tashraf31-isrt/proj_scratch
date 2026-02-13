@@ -1,0 +1,60 @@
+# Matrix Calculator - Quick Test Examples
+
+## Test 1: Simple 2×2 Matrix Operations with Fractions
+
+### Input for Addition/Subtraction:
+```
+Matrix A (2×2):
+1/2 1/3
+1/4 1/5
+
+Matrix B (2×2):
+1/6 1/7
+1/8 1/9
+```
+
+### Input for Determinant:
+```
+2 2
+4 2
+3 1
+```
+Expected: det = -2
+
+### Input for RREF (Fraction Example):
+```
+2 3
+1/2 1/3 1/4
+1/5 1/6 1/7
+```
+
+## Test 2: 3×3 Identity Matrix
+```
+3 3
+1 0 0
+0 1 0
+0 0 1
+```
+Determinant should be 1
+Inverse should be itself
+
+## Test 3: Linear Independence
+```
+3 3
+1 2 3
+0 1 2
+0 0 1
+```
+Should be linearly independent (rank = 3)
+
+## Usage Tips
+- Enter fractions as `1/2`, `3/4`, etc.
+- Enter integers as `1`, `2`, `3`, etc.
+- Max matrix size: 5×5
+- Results display as exact fractions (no decimals!)
+
+## Run the Program
+```bash
+cd d:\Programming\proj_scratch  
+.\main_fraction.exe
+```

@@ -1,0 +1,14 @@
+# Compiled binaries
+*.exe
+*.o
+*.obj
+
+# Backup files
+*.backup
+
+# VS Code folders (optional, some prefer to kept them)
+.vscode/
+
+# Build artifacts
+main_full
+main_full_test
