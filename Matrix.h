@@ -57,6 +57,8 @@ public:
   bool isSymmetric() const;
   bool isLinearlyIndependent() const;
   std::vector<std::vector<Fraction>> basis() const;
+  std::vector<Fraction> getRowVector(int i) const;
+  std::vector<Fraction> getColVector(int j) const;
 
   // Helper methods
   void swapRows(int i, int j);

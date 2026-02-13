@@ -205,7 +205,9 @@ void statisticalMenu() {
     clearScreen();
     printHeader();
     cout << BOLD << YELLOW << "\n==== Statistical Menu ====\n" << RESET;
-    cout << GREEN << "1. " << RESET << "Calculate Mean, Variance, Std Dev\n";
+    cout << GREEN << "1. " << RESET << "Calculate Mean\n";
+    cout << GREEN << "2. " << RESET << "Calculate Variance\n";
+    cout << GREEN << "3. " << RESET << "Calculate Standard Deviation\n";
     cout << GREEN << "0. " << RESET << "Back to Main Menu\n";
     cout << BOLD << YELLOW << "==========================\n" << RESET;
 
@@ -223,20 +225,54 @@ void statisticalMenu() {
     if (choice == 0)
       break;
 
-    if (choice == 1) {
+    if (choice >= 1 && choice <= 3) {
       try {
-        vector<Fraction> data = inputVector();
-        Fraction mean = Statistics::calculateMean(data);
-        Fraction var = Statistics::calculateVariance(data);
-        double stdDev = Statistics::calculateStandardDeviation(data);
+        Matrix M = inputMatrix("Source Matrix");
+        cout << CYAN << "\nChoose extraction:\n";
+        cout << "  1. Row (rA, rB, ...)\n";
+        cout << "  2. Column (cA, cB, ...)\n";
+        cout << "Enter choice: " << RESET;
+        int type;
+        cin >> type;
 
-        cout << GREEN << "\n--- Statistics Results ---" << RESET << endl;
-        cout << "Dataset size: " << data.size() << endl;
-        cout << "Mean:         " << YELLOW << mean << RESET << " (" << fixed
-             << setprecision(4) << mean.toDouble() << ")" << endl;
-        cout << "Variance:     " << YELLOW << var << RESET << " ("
-             << var.toDouble() << ")" << endl;
-        cout << "Std Dev:      " << YELLOW << fixed << stdDev << RESET << endl;
+        vector<Fraction> data;
+        if (type == 1) {
+          int r;
+          cout << CYAN << "Enter row index (1-" << M.getRows()
+               << "): " << RESET;
+          cin >> r;
+          data = M.getRowVector(r - 1);
+        } else if (type == 2) {
+          int c;
+          cout << CYAN << "Enter column index (1-" << M.getCols()
+               << "): " << RESET;
+          cin >> c;
+          data = M.getColVector(c - 1);
+        } else {
+          cout << RED << "Invalid choice!" << RESET << endl;
+          waitForEnter();
+          continue;
+        }
+
+        cout << GREEN << "\nSelected Data: " << RESET;
+        for (size_t i = 0; i < data.size(); i++) {
+          cout << data[i] << (i == data.size() - 1 ? "" : ", ");
+        }
+        cout << endl;
+
+        if (choice == 1) {
+          Fraction mean = Statistics::calculateMean(data);
+          cout << GREEN << "Mean:         " << YELLOW << mean << RESET << " ("
+               << fixed << setprecision(4) << mean.toDouble() << ")" << endl;
+        } else if (choice == 2) {
+          Fraction var = Statistics::calculateVariance(data);
+          cout << GREEN << "Variance:     " << YELLOW << var << RESET << " ("
+               << var.toDouble() << ")" << endl;
+        } else if (choice == 3) {
+          double stdDev = Statistics::calculateStandardDeviation(data);
+          cout << GREEN << "Std Dev:      " << YELLOW << fixed << stdDev
+               << RESET << endl;
+        }
       } catch (const exception &e) {
         cout << RED << "Error: " << e.what() << RESET << endl;
       }

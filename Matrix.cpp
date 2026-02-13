@@ -508,3 +508,19 @@ Matrix Matrix::identity(int n) {
 }
 
 Matrix Matrix::zero(int r, int c) { return Matrix(r, c); }
+
+std::vector<Fraction> Matrix::getRowVector(int i) const {
+  if (i < 0 || i >= rows)
+    throw std::out_of_range("Row index out of bounds");
+  return data[i];
+}
+
+std::vector<Fraction> Matrix::getColVector(int j) const {
+  if (j < 0 || j >= cols)
+    throw std::out_of_range("Column index out of bounds");
+  std::vector<Fraction> col;
+  for (int i = 0; i < rows; i++) {
+    col.push_back(data[i][j]);
+  }
+  return col;
+}
