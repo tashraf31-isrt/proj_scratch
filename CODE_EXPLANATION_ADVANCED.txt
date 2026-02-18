@@ -26,13 +26,6 @@ The `Matrix` class uses a `std::vector<std::vector<double>>` to store data.
 ### `transpose()`
 - **Logic**: Switches rows with columns. `Result[j][i] = Original[i][j]`.
 
-### `ref()` (Row Echelon Form)
-- **Logic**: Uses **Gaussian Elimination**.
-- **Steps**:
-  1. Find a pivot (non-zero element, `> EPSILON`) in the current column.
-  2. Swap rows if necessary to bring the pivot to the diagonal.
-  3. Use row operations to clear all elements below the pivot.
-
 ### `rref()` (Reduced Row Echelon Form)
 - **Logic**: Extends the `ref()` logic to clear elements *above* the pivots and normalize pivot values to `1.0`.
 - **Cleanup**: After calculation, any values extremely close to zero are explicitly set to `0.0` to ensure clean output.
@@ -45,10 +38,7 @@ The `Matrix` class uses a `std::vector<std::vector<double>>` to store data.
 - **Logic**: Uses the **Gauss-Jordan Method** on an augmented matrix `[A | I]`.
 - **Singularity Check**: If `abs(determinant) < EPSILON`, the matrix is marked as singular and can't be inverted.
 
-### `eigenvalues()`
-- **Logic**:
-  - **2x2**: Solves the characteristic quadratic equation `λ² - trace(A)λ + det(A) = 0`.
-  - **Larger**: Uses the **QR Algorithm** (30 iterations) to converge the matrix into a form where eigenvalues appear on the diagonal.
+
 
 ---
 

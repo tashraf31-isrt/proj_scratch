@@ -258,10 +258,10 @@ std::pair<int, std::string> entry{1, "First"};
 auto [id, name] = entry;  // Structured binding (C++17)
 ```
 
-**Used in:** Matrix.h (implicitly, for eigenvalues return type)
-**Why?** Eigenvalues function returns both eigenvalues AND eigenvectors:
+**Used in:** Matrix.h (implicitly)
+**Why?** The Matrix class provides several analysis tools.
 ```cpp
-std::pair<std::vector<Fraction>, Matrix> eigenvalues() const;
+std::vector<Fraction> basis() const;
 ```
 
 --------------------------------------------------------------------------------

@@ -28,14 +28,10 @@ void clearScreen() {
 void matrixAddSubtract();
 void matrixMultiplication();
 void calculateRREF();
-void calculateREF();
 void calculateDeterminant();
-void calculateRank();
 void calculateInverse();
 void transposeMatrix();
 void calculateTrace();
-void calculateEigenvalues();
-void checkDiagonalization();
 
 void printHeader() {
   cout << BOLD << CYAN;
@@ -50,14 +46,10 @@ void printLinearAlgebraMenu() {
   cout << GREEN << "1.  " << RESET << "Addition/Subtraction\n";
   cout << GREEN << "2.  " << RESET << "Matrix Multiplication\n";
   cout << GREEN << "3.  " << RESET << "RREF (with Linear Independence)\n";
-  cout << GREEN << "4.  " << RESET << "REF (Gaussian)\n";
-  cout << GREEN << "5.  " << RESET << "Determinant\n";
-  cout << GREEN << "6.  " << RESET << "Rank (Span)\n";
-  cout << GREEN << "7.  " << RESET << "Inverse\n";
-  cout << GREEN << "8.  " << RESET << "Eigenvalues/Eigenvectors\n";
-  cout << GREEN << "9.  " << RESET << "Diagonalization\n";
-  cout << GREEN << "10. " << RESET << "Transpose\n";
-  cout << GREEN << "11. " << RESET << "Trace\n";
+  cout << GREEN << "4.  " << RESET << "Determinant\n";
+  cout << GREEN << "5.  " << RESET << "Inverse\n";
+  cout << GREEN << "6.  " << RESET << "Transpose\n";
+  cout << GREEN << "7.  " << RESET << "Trace\n";
   cout << GREEN << "0.  " << RESET << "Back to Main Menu\n";
   cout << BOLD << YELLOW << "============================\n" << RESET;
 }
@@ -135,31 +127,19 @@ void linearAlgebraMenu() {
       calculateRREF();
       break;
     case 4:
-      calculateREF();
-      break;
-    case 5:
       calculateDeterminant();
       break;
-    case 6:
-      calculateRank();
-      break;
-    case 7:
+    case 5:
       calculateInverse();
       break;
-    case 8:
-      calculateEigenvalues();
-      break;
-    case 9:
-      checkDiagonalization();
-      break;
-    case 10:
+    case 6:
       transposeMatrix();
       break;
-    case 11:
+    case 7:
       calculateTrace();
       break;
     default:
-      cout << RED << "Invalid option! Please select 0-11." << RESET << endl;
+      cout << RED << "Invalid option! Please select 0-7." << RESET << endl;
     }
 
     waitForEnter();
@@ -321,20 +301,6 @@ void calculateRREF() {
   }
 }
 
-void calculateREF() {
-  cout << BOLD << MAGENTA << "\n=== REF (Row Echelon Form) ===\n" << RESET;
-  try {
-    Matrix A = inputMatrix("Matrix");
-    cout << GREEN << "\nOriginal Matrix:" << RESET;
-    A.display();
-    Matrix ref = A.ref();
-    cout << GREEN << "REF:" << RESET;
-    ref.display();
-  } catch (const exception &e) {
-    cout << RED << "Error: " << e.what() << RESET << endl;
-  }
-}
-
 void calculateDeterminant() {
   cout << BOLD << MAGENTA << "\n=== Determinant ===\n" << RESET;
   try {
@@ -344,19 +310,6 @@ void calculateDeterminant() {
     A.display();
     cout << GREEN << "Determinant: " << YELLOW << fixed << setprecision(4)
          << det << RESET << endl;
-  } catch (const exception &e) {
-    cout << RED << "Error: " << e.what() << RESET << endl;
-  }
-}
-
-void calculateRank() {
-  cout << BOLD << MAGENTA << "\n=== Rank (Span) ===\n" << RESET;
-  try {
-    Matrix A = inputMatrix("Matrix");
-    int r = A.rank();
-    cout << GREEN << "\nMatrix:" << RESET;
-    A.display();
-    cout << GREEN << "Rank: " << YELLOW << r << RESET << endl;
   } catch (const exception &e) {
     cout << RED << "Error: " << e.what() << RESET << endl;
   }
@@ -399,53 +352,6 @@ void calculateTrace() {
     A.display();
     cout << GREEN << "Trace: " << YELLOW << fixed << setprecision(4) << tr
          << RESET << endl;
-  } catch (const exception &e) {
-    cout << RED << "Error: " << e.what() << RESET << endl;
-  }
-}
-
-void calculateEigenvalues() {
-  cout << BOLD << MAGENTA << "\n=== Eigenvalues/Eigenvectors ===\n" << RESET;
-  try {
-    Matrix A = inputMatrix("Matrix");
-    auto [eigenvals, eigenvecs] = A.eigenvalues();
-    cout << GREEN << "\nMatrix:" << RESET;
-    A.display();
-    cout << GREEN << "\nEigenvalues (approximate):" << RESET << endl;
-    for (size_t i = 0; i < eigenvals.size(); i++) {
-      cout << "  Lambda " << (i + 1) << " = " << YELLOW << fixed
-           << setprecision(4) << eigenvals[i] << RESET << endl;
-    }
-  } catch (const exception &e) {
-    cout << RED << "Error: " << e.what() << RESET << endl;
-  }
-}
-
-void checkDiagonalization() {
-  cout << BOLD << MAGENTA << "\n=== Diagonalization ===\n" << RESET;
-  try {
-    Matrix A = inputMatrix("Matrix");
-    Matrix P(1, 1), D(1, 1), Pinv(1, 1);
-    bool diag = A.diagonalize(P, D, Pinv);
-    cout << GREEN << "\nOriginal Matrix A:" << RESET;
-    A.display();
-    if (diag) {
-      cout << GREEN << "[YES] The matrix is DIAGONALIZABLE\n" << RESET;
-      cout << CYAN << "\nMatrix P (Eigenvectors):" << RESET;
-      P.display();
-      cout << CYAN << "Diagonal Matrix D (Eigenvalues):" << RESET;
-      D.display();
-      cout << CYAN << "Inverse Matrix P^-1:" << RESET;
-      Pinv.display();
-
-      cout << GREEN << "\nVerification (P * D * P^-1):" << RESET;
-      Matrix ver = P * D * Pinv;
-      ver.display();
-      cout << YELLOW << "Matches original A within numerical precision."
-           << RESET << endl;
-    } else {
-      cout << RED << "[NO] The matrix is NOT diagonalizable" << RESET << endl;
-    }
   } catch (const exception &e) {
     cout << RED << "Error: " << e.what() << RESET << endl;
   }

@@ -19,14 +19,12 @@ g++ -o main.exe main.cpp Matrix.cpp -std=c++17
 | 7 | Rank | Any matrix | Find dimension of span |
 | 8 | Linear Independence | Any matrix | Check column independence |
 | 9 | Basis | Any matrix | Extract basis vectors |
-| 10 | Eigenvalues | Square matrix | Find principal components |
-| 11 | Inverse | Non-singular square | Solve AX = B |
-| 12 | Orthogonality | Square matrix | Verify orthogonal basis |
-| 13 | Gram-Schmidt | Any matrix | Orthonormalize vectors |
-| 14 | Diagonalization | Square matrix | Simplify matrix powers |
-| 15 | SVD | Any matrix | Data compression, PCA |
-| 16 | Transpose | Any matrix | Switch rows/columns |
-| 17 | Trace | Square matrix | Sum of eigenvalues |
+| 10 | Inverse | Non-singular square | Solve AX = B |
+| 11 | Orthogonality | Square matrix | Verify orthogonal basis |
+| 12 | Gram-Schmidt | Any matrix | Orthonormalize vectors |
+| 13 | SVD | Any matrix | Data compression, PCA |
+| 14 | Transpose | Any matrix | Switch rows/columns |
+| 15 | Trace | Square matrix | Sum of main diagonal |
 
 ### Sample Matrices for Testing
 

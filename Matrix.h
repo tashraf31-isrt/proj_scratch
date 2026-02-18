@@ -41,20 +41,10 @@ public:
   double determinant() const;
   Matrix inverse() const;
   Matrix rref() const;
-  Matrix ref() const;
-  int rank() const;
   double trace() const;
-
-  // Eigen-stuff
-  std::pair<std::vector<double>, Matrix> eigenvalues() const;
-  std::vector<Matrix> findEigenvectors(double lambda) const;
-  bool diagonalize(Matrix &P, Matrix &D, Matrix &Pinv) const;
 
   // Decompositions
   Matrix gramSchmidt() const;
-
-  std::pair<Matrix, Matrix> qrDecomposition() const;
-  bool isDiagonalizable() const;
 
   // Properties
   bool isSquare() const { return rows == cols; }

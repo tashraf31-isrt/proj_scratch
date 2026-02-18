@@ -8,7 +8,7 @@ A professional C++ library for **Linear Algebra** and **Statistical Analysis** w
 📏 **5×5 Maximum Size** - Optimized for linear algebra learning and matrix analysis.
 🎨 **Color-Coded Interface** - Premium terminal UI with intuitive navigation.
 📊 **Matrix-Based Stats** - Extract rows or columns from matrices for statistical calculations.
-🔢 **14 Operations** - Comprehensive suite across Algebra and Statistics.
+🔢 **10 Operations** - Comprehensive suite across Algebra and Statistics.
 
 ## Operations
 
@@ -16,14 +16,10 @@ A professional C++ library for **Linear Algebra** and **Statistical Analysis** w
 1.  **Addition/Subtraction**
 2.  **Matrix Multiplication**
 3.  **RREF (Reduced Row Echelon Form)** - With Linear Independence check.
-4.  **REF (Gaussian Elimination)**
-5.  **Determinant** - Using triangular reduction for stability.
-6.  **Rank (Span)** - Number of independent dimensions.
-7.  **Inverse** - Full matrix inversion.
-8.  **Eigenvalues/Eigenvectors** - Using the QR Algorithm.
-9.  **Diagonalization** - Check for similar diagonal matrices.
-10. **Transpose** - Row-column swap.
-11. **Trace** - Sum of main diagonal.
+4.  **Determinant** - Using triangular reduction for stability.
+5.  **Inverse** - Full matrix inversion.
+6.  **Transpose** - Row-column swap.
+7.  **Trace** - Sum of main diagonal.
 
 ### Statistical Analysis
 1.  **Mean** - Calculate the average of a selected row or column.
@@ -58,9 +54,6 @@ proj_scratch/
 
 ### Numerical Stability
 The project uses an `EPSILON` threshold (1e-9) for all zero-checks to ensure that floating-point inaccuracies do not interfere with calculations.
-
-### QR Algorithm
-For matrices larger than 2×2, eigenvalues are approximated using 30 iterations of the QR algorithm, providing stable results.
 
 ## Example Test Case: Statistics
 1. Enter a 1x3 Matrix: `[1.0, 2.0, 3.0]`

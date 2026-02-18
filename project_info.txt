@@ -1,0 +1,44 @@
+# Comprehensive Project Documentation: Linear Algebra & Statistics Calculator
+
+## 1. Project Introduction & Purpose
+**Name:** C++ Linear Algebra & Statistics Calculator (Decimal Version)
+**Purpose:** This project is a professional-grade terminal application designed for high-precision numerical analysis. It serves as an educational and utility tool for students and engineers to perform matrix operations and statistical data analysis without the overhead of heavy software suites.
+
+## 2. Programming Language & Technical Standards
+- **Language:** C++ (C++17 Standard)
+- **Precision:** Uses `double` floating-point arithmetic.
+- **Numerical Stability:** Implements an `EPSILON` threshold (1e-9) to handle floating-point inaccuracies, ensuring reliable zero-checks in algorithms like RREF and Inverse.
+- **UI:** Custom color-coded terminal interface using ANSI escape codes.
+
+## 3. List of Operations
+
+### A. Linear Algebra
+- **Basic Arithmetic:** Matrix addition, subtraction, and multiplication.
+- **Matrix Analysis:**
+    - **Determinant:** Uses triangular reduction for stability and speed.
+    - **Inverse:** Calculated via the Gauss-Jordan elimination method.
+    - **Trace:** Sum of the main diagonal elements.
+    - **Transpose:** Rows and columns are swapped.
+- **Advanced Solvers:**
+    - **RREF (Reduced Row Echelon Form):** Used for solving systems of linear equations and finding rank.
+    - **Linear Independence Check:** Analyzes matrix columns to determine if they form a basis.
+
+### B. Statistical Analysis
+- **Data Source:** Capable of extracting any row or column from a matrix for analysis.
+- **Calculations:**
+    - **Mean:** Average value of the dataset.
+    - **Variance:** Sample variance using Bessel's correction ($n-1$).
+    - **Standard Deviation:** Calculated as the square root of the variance.
+
+## 4. Project Structure
+- **Matrix.h:** Class definition, data member initialization (using `std::vector<std::vector<double>>`), and public method prototypes.
+- **Matrix.cpp:** Core logic for all Linear Algebra algorithms (Gauss-Jordan, Gram-Schmidt).
+- **Statistics.h:** A lightweight utility class for descriptive statistics.
+- **main.cpp:** The application entry point, containing menu logic, user input handling, and color formatting.
+- **README.md:** User-facing guide with setup instructions and feature highlights.
+- **CODE_EXPLANATION_ADVANCED.txt:** Detailed technical breakdown of internal algorithms for developers.
+
+## 5. Build & Run
+- **Compiler:** `g++` (recommended)
+- **Command:** `g++ -o main_full.exe main.cpp Matrix.cpp -std=c++17`
+- **Execution:** `./main_full.exe`

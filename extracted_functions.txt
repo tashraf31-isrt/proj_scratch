@@ -1,67 +1,43 @@
-#include "Matrix.h"
-#include <cmath>
-#include <iomanip>
+/*
+ * EXTRACTED FUNCTIONS: LINEAR AND STATISTICAL OPERATIONS
+ */
 
-const double EPSILON = 1e-9;
+// ==========================================
+// STATISTICAL OPERATIONS (from Statistics.h)
+// ==========================================
 
-// Constructors
-Matrix::Matrix() : rows(1), cols(1) {
-  data.resize(1, std::vector<double>(1, 0.0));
+static double calculateMean(const std::vector<double> &data) {
+  if (data.empty())
+    return 0.0;
+  double sum = 0.0;
+  for (double val : data) {
+    sum += val;
+  }
+  return sum / static_cast<double>(data.size());
 }
 
-Matrix::Matrix(int r, int c) : rows(r), cols(c) {
-  if (r > MAX_SIZE || c > MAX_SIZE || r < 1 || c < 1) {
-    throw std::invalid_argument("Matrix dimensions must be between 1 and " +
-                                std::to_string(MAX_SIZE));
+static double calculateVariance(const std::vector<double> &data) {
+  if (data.size() < 2)
+    return 0.0;
+  double mean = calculateMean(data);
+  double sumSqDiff = 0.0;
+  for (double val : data) {
+    double diff = val - mean;
+    sumSqDiff += diff * diff;
   }
-  data.resize(rows, std::vector<double>(cols, 0.0));
+  return sumSqDiff / static_cast<double>(data.size() - 1);
 }
 
-Matrix::Matrix(const std::vector<std::vector<double>> &values) {
-  if (values.empty()) {
-    throw std::invalid_argument("Cannot create matrix from empty vector");
-  }
-  rows = values.size();
-  cols = values[0].size();
-  if (rows > MAX_SIZE || cols > MAX_SIZE) {
-    throw std::invalid_argument("Matrix dimensions exceed maximum size of " +
-                                std::to_string(MAX_SIZE));
-  }
-  data = values;
+static double calculateStandardDeviation(const std::vector<double> &data) {
+  return std::sqrt(calculateVariance(data));
 }
 
-// Getters and Setters
-double Matrix::get(int i, int j) const {
-  if (i < 0 || i >= rows || j < 0 || j >= cols) {
-    throw std::out_of_range("Matrix indices out of range");
-  }
-  return data[i][j];
-}
 
-void Matrix::set(int i, int j, double value) {
-  if (i < 0 || i >= rows || j < 0 || j >= cols) {
-    throw std::out_of_range("Matrix indices out of range");
-  }
-  data[i][j] = value;
-}
+// ==========================================
+// LINEAR OPERATIONS (from Matrix.cpp)
+// ==========================================
 
-// Display
-void Matrix::display() const {
-  std::cout << "\n";
-  for (int i = 0; i < rows; i++) {
-    std::cout << "  [ ";
-    for (int j = 0; j < cols; j++) {
-      std::cout << std::setw(10) << std::fixed << std::setprecision(4)
-                << data[i][j];
-      if (j < cols - 1)
-        std::cout << "  ";
-    }
-    std::cout << " ]\n";
-  }
-  std::cout << "\n";
-}
-
-// Basic Operations
+// Matrix Addition
 Matrix Matrix::operator+(const Matrix &other) const {
   if (rows != other.rows || cols != other.cols) {
     throw std::invalid_argument("Matrix dimensions must match for addition");
@@ -75,6 +51,7 @@ Matrix Matrix::operator+(const Matrix &other) const {
   return result;
 }
 
+// Matrix Subtraction
 Matrix Matrix::operator-(const Matrix &other) const {
   if (rows != other.rows || cols != other.cols) {
     throw std::invalid_argument("Matrix dimensions must match for subtraction");
@@ -88,6 +65,7 @@ Matrix Matrix::operator-(const Matrix &other) const {
   return result;
 }
 
+// Matrix Multiplication
 Matrix Matrix::operator*(const Matrix &other) const {
   if (cols != other.rows) {
     throw std::invalid_argument("Invalid dimensions for matrix multiplication");
@@ -105,6 +83,7 @@ Matrix Matrix::operator*(const Matrix &other) const {
   return result;
 }
 
+// Scalar Multiplication
 Matrix Matrix::operator*(double scalar) const {
   Matrix result(rows, cols);
   for (int i = 0; i < rows; i++) {
@@ -115,6 +94,7 @@ Matrix Matrix::operator*(double scalar) const {
   return result;
 }
 
+// Matrix Transposition
 Matrix Matrix::transpose() const {
   Matrix result(cols, rows);
   for (int i = 0; i < rows; i++) {
@@ -125,40 +105,7 @@ Matrix Matrix::transpose() const {
   return result;
 }
 
-// Helper Methods
-void Matrix::swapRows(int i, int j) { std::swap(data[i], data[j]); }
-
-void Matrix::multiplyRow(int i, double scalar) {
-  for (int j = 0; j < cols; j++) {
-    data[i][j] *= scalar;
-  }
-}
-
-void Matrix::addMultipleOfRow(int target, int source, double scalar) {
-  for (int j = 0; j < cols; j++) {
-    data[target][j] += scalar * data[source][j];
-  }
-}
-
-Matrix Matrix::getSubmatrix(int excludeRow, int excludeCol) const {
-  Matrix result(rows - 1, cols - 1);
-  int r = 0;
-  for (int i = 0; i < rows; i++) {
-    if (i == excludeRow)
-      continue;
-    int c = 0;
-    for (int j = 0; j < cols; j++) {
-      if (j == excludeCol)
-        continue;
-      result.data[r][c] = data[i][j];
-      c++;
-    }
-    r++;
-  }
-  return result;
-}
-
-// RREF (Reduced Row Echelon Form)
+// Reduced Row Echelon Form (RREF)
 Matrix Matrix::rref() const {
   Matrix result = *this;
   int lead = 0;
@@ -227,7 +174,7 @@ double Matrix::trace() const {
   return tr;
 }
 
-// Inverse
+// Matrix Inverse
 Matrix Matrix::inverse() const {
   if (!isSquare()) {
     throw std::invalid_argument("Only square matrices can be inverted");
@@ -253,7 +200,7 @@ Matrix Matrix::inverse() const {
   return result;
 }
 
-// Gram-Schmidt
+// Gram-Schmidt Process
 Matrix Matrix::gramSchmidt() const {
   Matrix result(rows, cols);
   for (int j = 0; j < cols; j++) {
@@ -284,78 +231,3 @@ Matrix Matrix::gramSchmidt() const {
   return result;
 }
 
-bool Matrix::isSymmetric() const {
-  if (!isSquare())
-    return false;
-  for (int i = 0; i < rows; i++) {
-    for (int j = i + 1; j < cols; j++) {
-      if (std::abs(data[i][j] - data[j][i]) > EPSILON)
-        return false;
-    }
-  }
-  return true;
-}
-
-bool Matrix::isLinearlyIndependent() const {
-  Matrix r = rref();
-  int rnk = 0;
-  for (int i = 0; i < rows; i++) {
-    bool allZero = true;
-    for (int j = 0; j < cols; j++) {
-      if (std::abs(r.data[i][j]) > EPSILON) {
-        allZero = false;
-        break;
-      }
-    }
-    if (!allZero)
-      rnk++;
-  }
-  return rnk == std::min(rows, cols);
-}
-
-std::vector<std::vector<double>> Matrix::basis() const {
-  Matrix rref_form = rref();
-  std::vector<std::vector<double>> basis;
-  for (int i = 0; i < rows; i++) {
-    bool allZero = true;
-    for (int j = 0; j < cols; j++) {
-      if (std::abs(rref_form.data[i][j]) > EPSILON) {
-        allZero = false;
-        break;
-      }
-    }
-    if (!allZero) {
-      std::vector<double> row;
-      for (int j = 0; j < cols; j++)
-        row.push_back(data[i][j]);
-      basis.push_back(row);
-    }
-  }
-  return basis;
-}
-
-Matrix Matrix::identity(int n) {
-  if (n > MAX_SIZE || n < 1)
-    throw std::invalid_argument("Matrix size error");
-  Matrix I(n, n);
-  for (int i = 0; i < n; i++)
-    I.data[i][i] = 1.0;
-  return I;
-}
-
-Matrix Matrix::zero(int r, int c) { return Matrix(r, c); }
-
-std::vector<double> Matrix::getRowVector(int i) const {
-  if (i < 0 || i >= rows)
-    throw std::out_of_range("Row index error");
-  return data[i];
-}
-
-std::vector<double> Matrix::getColVector(int j) const {
-  if (j < 0 || j >= cols)
-    throw std::out_of_range("Col index error");
-  std::vector<double> col;
-  for (int i = 0; i < rows; i++)
-    col.push_back(data[i][j]);
-  return col;
-}
