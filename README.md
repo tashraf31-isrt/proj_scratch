@@ -8,18 +8,17 @@ A professional C++ library for **Linear Algebra** and **Statistical Analysis** w
 📏 **5×5 Maximum Size** - Optimized for linear algebra learning and matrix analysis.
 🎨 **Color-Coded Interface** - Premium terminal UI with intuitive navigation.
 📊 **Matrix-Based Stats** - Extract rows or columns from matrices for statistical calculations.
-🔢 **10 Operations** - Comprehensive suite across Algebra and Statistics.
+🔢 **9 Operations** - Comprehensive suite across Algebra and Statistics.
 
 ## Operations
 
 ### Linear Algebra
 1.  **Addition/Subtraction**
 2.  **Matrix Multiplication**
-3.  **RREF (Reduced Row Echelon Form)** - With Linear Independence check.
-4.  **Determinant** - Using triangular reduction for stability.
-5.  **Inverse** - Full matrix inversion.
-6.  **Transpose** - Row-column swap.
-7.  **Trace** - Sum of main diagonal.
+3.  **Determinant** - Using triangular reduction for stability.
+4.  **Inverse** - Full matrix inversion.
+5.  **Transpose** - Row-column swap.
+6.  **Trace** - Sum of main diagonal.
 
 ### Statistical Analysis
 1.  **Mean** - Calculate the average of a selected row or column.

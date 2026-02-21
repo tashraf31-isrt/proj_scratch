@@ -1,0 +1,134 @@
+================================================================================
+       PRESENTATION SCRIPT — Matrix Addition & Subtraction
+================================================================================
+
+
+----- 1. INTRODUCTION -----
+
+Assalamu Alaikum / Good morning everyone,
+
+Today we are presenting our C++ project — a Linear Algebra Calculator.
+This calculator can perform several matrix operations such as Addition,
+Subtraction, Multiplication, Determinant, Inverse, Transpose,
+and Trace, all up to 5×5 matrices with high-precision decimal output.
+
+For this demonstration, we will focus specifically on
+Matrix Addition and Matrix Subtraction.
+
+
+----- 2. CONCEPT -----
+
+Matrix Addition:
+  - Two matrices A and B can be added only if they have the SAME dimensions
+    (same number of rows and same number of columns).
+  - Each element of the result matrix C is the sum of the corresponding
+    elements from A and B.
+  - Formula:  C[i][j] = A[i][j] + B[i][j]
+
+  Example:
+    A = | 1  2 |    B = | 5  6 |    A + B = | 1+5  2+6 |   = | 6   8 |
+        | 3  4 |        | 7  8 |            | 3+7  4+8 |     | 10 12 |
+
+Matrix Subtraction:
+  - Same rule — matrices must have identical dimensions.
+  - Each element of the result matrix C is the difference of the
+    corresponding elements from A and B.
+  - Formula:  C[i][j] = A[i][j] - B[i][j]
+
+  Example:
+    A = | 5  6 |    B = | 1  2 |    A - B = | 5-1  6-2 |   = | 4  4 |
+        | 7  8 |        | 3  4 |            | 7-3  8-4 |     | 4  4 |
+
+
+----- 3. LOGIC OF THE CODE -----
+
+Step 1: Check if both matrices have the same dimensions (rows & columns).
+        If NOT, throw an error — operation is not possible.
+
+Step 2: Create a new result matrix of the same size.
+
+Step 3: Use two nested loops to go through every row (i) and column (j):
+          - For Addition:    result[i][j] = A[i][j] + B[i][j]
+          - For Subtraction: result[i][j] = A[i][j] - B[i][j]
+
+Step 4: Return the result matrix.
+
+Time Complexity: O(rows × cols) — we visit each element exactly once.
+
+
+----- 4. CODE & FUNCTION EXPLANATION -----
+
+>> operator+ (Addition) — defined in Matrix.cpp
+
+    Matrix Matrix::operator+(const Matrix &other) const {
+      if (rows != other.rows || cols != other.cols) {
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+      }
+      Matrix result(rows, cols);
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          result.data[i][j] = data[i][j] + other.data[i][j];
+        }
+      }
+      return result;
+    }
+
+  Explanation:
+  - "operator+" lets us write  C = A + B  directly in code.
+  - Line 1: We check that A and B have the same rows and columns.
+            If not, it throws an error message.
+  - Line 2: We create a new empty matrix "result" with the same size.
+  - Lines 3-5: Two nested for-loops iterate over every element.
+               Each result element = sum of corresponding A and B elements.
+  - Line 6: The completed result matrix is returned.
+
+
+>> operator- (Subtraction) — defined in Matrix.cpp
+
+    Matrix Matrix::operator-(const Matrix &other) const {
+      if (rows != other.rows || cols != other.cols) {
+        throw std::invalid_argument("Matrix dimensions must match for subtraction");
+      }
+      Matrix result(rows, cols);
+      for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+          result.data[i][j] = data[i][j] - other.data[i][j];
+        }
+      }
+      return result;
+    }
+
+  Explanation:
+  - Identical structure to addition, only difference is the minus (-) sign.
+  - Same dimension check, same nested loops, but subtracts instead of adds.
+
+
+>> matrixAddSubtract() — defined in main.cpp (the menu function)
+
+    void matrixAddSubtract() {
+      // Shows sub-menu: 1. Addition  2. Subtraction
+      // Reads user's choice
+      // Takes input for Matrix A and Matrix B
+      // Calls A + B or A - B based on choice
+      // Displays Matrix A, Matrix B, and the Result
+    }
+
+  Explanation:
+  - This is the user-facing function that ties everything together.
+  - It asks the user to pick Addition or Subtraction.
+  - It takes both matrices as input (rows, cols, then elements row by row).
+  - It calls the operator+ or operator- function accordingly.
+  - Finally, it displays all three matrices (A, B, and Result).
+  - If the dimensions don't match, it catches the error and shows a message.
+
+
+----- 5. SUMMARY -----
+
+  - Addition and Subtraction require matrices of the SAME dimensions.
+  - We use C++ operator overloading (operator+, operator-) for clean syntax.
+  - Nested loops handle element-wise computation in O(rows × cols) time.
+  - Error handling ensures invalid inputs are caught gracefully.
+
+Thank you for your attention!
+
+================================================================================

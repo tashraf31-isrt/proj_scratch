@@ -42,7 +42,6 @@ To provide an efficient and accurate C++ tool for students and educators to solv
 - Matrix Addition, Subtraction, & Multiplication
 - Determinant & Trace
 - Inverse & Transpose
-- RREF & Linear Independence
 
 ### Statistical Operations
 - Data Extraction (Rows/Columns)
@@ -78,28 +77,6 @@ The function iterates through each element $(i, j)$ of two matrices and performs
 Input $A = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}, B = \begin{bmatrix} 5 & 6 \\ 7 & 8 \end{bmatrix} \implies A+B = \begin{bmatrix} 6 & 8 \\ 10 & 12 \end{bmatrix}$
 
 ---
-
-## Page 6: RREF (Reduced Row Echelon Form)
-### Code Snippet
-```cpp
-Matrix Matrix::rref() const {
-  Matrix result = *this;
-  int lead = 0;
-  for (int r = 0; r < rows && lead < cols; r++) {
-    // ... pivot selection and row swapping ...
-    double pivot = result.data[r][lead];
-    if (std::abs(pivot) > EPSILON) result.multiplyRow(r, 1.0 / pivot);
-    for (int i = 0; i < rows; i++) {
-      if (i != r) result.addMultipleOfRow(i, r, -result.data[i][lead]);
-    }
-    lead++;
-  }
-  return result;
-}
-```
-
-### Explanation
-Uses Gauss-Jordan elimination. It normalizes each row by its pivot and clears all elements above and below the pivot to `0.0`.
 
 ---
 
@@ -140,7 +117,7 @@ Matrix Matrix::inverse() const {
 ```
 
 ### Explanation
-Uses the Augmented Matrix method. We attach an identity matrix to the right of $A$, apply RREF to turn the left side into Identity, which results in $A^{-1}$ on the right.
+Uses the Augmented Matrix method. We attach an identity matrix to the right of $A$, apply Gauss-Jordan elimination to turn the left side into Identity, which results in $A^{-1}$ on the right.
 
 ---
 

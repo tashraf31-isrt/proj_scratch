@@ -7,7 +7,7 @@ This document provides a comprehensive technical breakdown of every function use
 ## 1. FLOATING POINT STABILITY: EPSILON
 Since computers cannot represent all decimal numbers perfectly (e.g., 0.1), we use a very small value called `EPSILON` (1e-9) to check if a number is "close enough" to zero.
 
-- **Purpose**: Prevents errors where a value like `0.0000000000000001` is treated as a non-zero number, which would break algorithms like RREF or Inverse.
+- **Purpose**: Prevents errors where a value like `0.0000000000000001` is treated as a non-zero number, which would break algorithms like Inverse.
 - **Usage**: Used in pivot selection and rank calculation: `if (std::abs(value) < EPSILON) // treat as zero`.
 
 ---
@@ -25,10 +25,6 @@ The `Matrix` class uses a `std::vector<std::vector<double>>` to store data.
 
 ### `transpose()`
 - **Logic**: Switches rows with columns. `Result[j][i] = Original[i][j]`.
-
-### `rref()` (Reduced Row Echelon Form)
-- **Logic**: Extends the `ref()` logic to clear elements *above* the pivots and normalize pivot values to `1.0`.
-- **Cleanup**: After calculation, any values extremely close to zero are explicitly set to `0.0` to ensure clean output.
 
 ### `determinant()`
 - **Logic**: Calculated using expansion by minors for small matrices and triangular reduction for larger ones.

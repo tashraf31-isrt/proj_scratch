@@ -13,9 +13,7 @@ g++ -o main.exe main.cpp Matrix.cpp -std=c++17
 | 1 | Addition | Two matrices (same size) | Combine transformations |
 | 2 | Subtraction | Two matrices (same size) | Find difference |
 | 3 | Multiplication | A(m×n) × B(n×p) | Compose transformations |
-| 4 | RREF | Any matrix | Solve linear systems |
-| 5 | REF | Any matrix | Find pivot positions |
-| 6 | Determinant | Square matrix | Check invertibility |
+| 4 | Determinant | Square matrix | Check invertibility |
 | 7 | Rank | Any matrix | Find dimension of span |
 | 8 | Linear Independence | Any matrix | Check column independence |
 | 9 | Basis | Any matrix | Extract basis vectors |
@@ -43,13 +41,7 @@ g++ -o main.exe main.cpp Matrix.cpp -std=c++17
 ```
 Determinant = -2
 
-**For RREF:**
-```
-3 4
-1 2 -1 3
-2 4 1 -2
--3 -6 3 4
-```
+
 
 **Orthogonal matrix:**
 ```
@@ -60,7 +52,6 @@ Determinant = -2
 
 ### Tips
 - Start with small matrices (2×2 or 3×3) to understand operations
-- Use option 4 (RREF) to solve systems of linear equations
 - Option 8 checks if columns form linearly independent set
 - Option 13 (Gram-Schmidt) creates orthonormal basis from any set
 - Colors may not work in old terminals - use Windows Terminal or modern shell

@@ -27,7 +27,6 @@ void clearScreen() {
 // Forward declarations
 void matrixAddSubtract();
 void matrixMultiplication();
-void calculateRREF();
 void calculateDeterminant();
 void calculateInverse();
 void transposeMatrix();
@@ -45,11 +44,10 @@ void printLinearAlgebraMenu() {
   cout << BOLD << YELLOW << "\n==== Linear Algebra Menu ====\n" << RESET;
   cout << GREEN << "1.  " << RESET << "Addition/Subtraction\n";
   cout << GREEN << "2.  " << RESET << "Matrix Multiplication\n";
-  cout << GREEN << "3.  " << RESET << "RREF (with Linear Independence)\n";
-  cout << GREEN << "4.  " << RESET << "Determinant\n";
-  cout << GREEN << "5.  " << RESET << "Inverse\n";
-  cout << GREEN << "6.  " << RESET << "Transpose\n";
-  cout << GREEN << "7.  " << RESET << "Trace\n";
+  cout << GREEN << "3.  " << RESET << "Determinant\n";
+  cout << GREEN << "4.  " << RESET << "Inverse\n";
+  cout << GREEN << "5.  " << RESET << "Transpose\n";
+  cout << GREEN << "6.  " << RESET << "Trace\n";
   cout << GREEN << "0.  " << RESET << "Back to Main Menu\n";
   cout << BOLD << YELLOW << "============================\n" << RESET;
 }
@@ -124,22 +122,19 @@ void linearAlgebraMenu() {
       matrixMultiplication();
       break;
     case 3:
-      calculateRREF();
-      break;
-    case 4:
       calculateDeterminant();
       break;
-    case 5:
+    case 4:
       calculateInverse();
       break;
-    case 6:
+    case 5:
       transposeMatrix();
       break;
-    case 7:
+    case 6:
       calculateTrace();
       break;
     default:
-      cout << RED << "Invalid option! Please select 0-7." << RESET << endl;
+      cout << RED << "Invalid option! Please select 0-6." << RESET << endl;
     }
 
     waitForEnter();
@@ -274,28 +269,6 @@ void matrixMultiplication() {
     B.display();
     cout << GREEN << "Result (A × B):" << RESET;
     C.display();
-  } catch (const exception &e) {
-    cout << RED << "Error: " << e.what() << RESET << endl;
-  }
-}
-
-void calculateRREF() {
-  cout << BOLD << MAGENTA << "\n=== RREF (with Linear Independence) ===\n"
-       << RESET;
-  try {
-    Matrix A = inputMatrix("Matrix");
-    cout << GREEN << "\nOriginal Matrix:" << RESET;
-    A.display();
-    Matrix rref = A.rref();
-    cout << GREEN << "RREF:" << RESET;
-    rref.display();
-    if (A.isLinearlyIndependent()) {
-      cout << GREEN << "[OK] Result: The columns are LINEARLY INDEPENDENT"
-           << RESET << endl;
-    } else {
-      cout << RED << "[FAIL] Result: The columns are LINEARLY DEPENDENT"
-           << RESET << endl;
-    }
   } catch (const exception &e) {
     cout << RED << "Error: " << e.what() << RESET << endl;
   }

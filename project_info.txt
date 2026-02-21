@@ -7,7 +7,7 @@
 ## 2. Programming Language & Technical Standards
 - **Language:** C++ (C++17 Standard)
 - **Precision:** Uses `double` floating-point arithmetic.
-- **Numerical Stability:** Implements an `EPSILON` threshold (1e-9) to handle floating-point inaccuracies, ensuring reliable zero-checks in algorithms like RREF and Inverse.
+- **Numerical Stability:** Implements an `EPSILON` threshold (1e-9) to handle floating-point inaccuracies, ensuring reliable zero-checks in algorithms like Inverse.
 - **UI:** Custom color-coded terminal interface using ANSI escape codes.
 
 ## 3. List of Operations
@@ -20,7 +20,6 @@
     - **Trace:** Sum of the main diagonal elements.
     - **Transpose:** Rows and columns are swapped.
 - **Advanced Solvers:**
-    - **RREF (Reduced Row Echelon Form):** Used for solving systems of linear equations and finding rank.
     - **Linear Independence Check:** Analyzes matrix columns to determine if they form a basis.
 
 ### B. Statistical Analysis

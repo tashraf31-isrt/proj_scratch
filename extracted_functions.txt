@@ -105,44 +105,6 @@ Matrix Matrix::transpose() const {
   return result;
 }
 
-// Reduced Row Echelon Form (RREF)
-Matrix Matrix::rref() const {
-  Matrix result = *this;
-  int lead = 0;
-  for (int r = 0; r < rows && lead < cols; r++) {
-    int i = r;
-    while (i < rows && std::abs(result.data[i][lead]) < EPSILON) {
-      i++;
-    }
-    if (i == rows) {
-      lead++;
-      r--;
-      continue;
-    }
-    if (i != r) {
-      result.swapRows(r, i);
-    }
-    double pivot = result.data[r][lead];
-    if (std::abs(pivot) > EPSILON) {
-      result.multiplyRow(r, 1.0 / pivot);
-    }
-    for (int i = 0; i < rows; i++) {
-      if (i != r) {
-        double factor = result.data[i][lead];
-        result.addMultipleOfRow(i, r, -factor);
-      }
-    }
-    lead++;
-  }
-  for (int i = 0; i < rows; i++) {
-    for (int j = 0; j < cols; j++) {
-      if (std::abs(result.data[i][j]) < EPSILON)
-        result.data[i][j] = 0.0;
-    }
-  }
-  return result;
-}
-
 // Determinant
 double Matrix::determinant() const {
   if (!isSquare()) {
